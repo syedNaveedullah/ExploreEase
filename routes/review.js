@@ -39,6 +39,7 @@ router.post(
     await listing.save();
     await newReview.save();
 
+    req.flash("success", "New Review Added");
     // console.log(newReview);
     // console.log(listing);
 
@@ -57,6 +58,7 @@ router.delete(
 
     await Review.findByIdAndDelete(reviewId);
 
+    req.flash("success", "Review Deleted");
     res.redirect(`/listings/${id}`);
   })
 );

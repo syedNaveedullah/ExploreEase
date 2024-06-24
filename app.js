@@ -6,11 +6,12 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
+const session = require("express-session");
+const flash = require("connect-flash");
 
 //requiring routes files
 const listing = require("./routes/listing.js");
 const reviews = require("./routes/review.js");
-
 
 //========================middle wares=====================================================
 //setting view engine
@@ -25,6 +26,26 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 //public folder
 app.use(express.static(path.join(__dirname, "/public")));
+//express sessions
+let sessionOptions = {
+  secret: "mysupersecretkey",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 + 24 * 60 * 60 * 1000,
+    httpOnly: true,
+  },
+};
+app.use(session(sessionOptions));
+// connect-flash
+app.use(flash());
+//flash local variabls
+app.use((req, res, next) => {
+  res.locals.successMsg = req.flash("success");
+  res.locals.errorMsg = req.flash("error");
+  next();
+});
 
 //=====================making connection with DB======================================
 main()
@@ -39,25 +60,24 @@ async function main() {
 }
 
 //=========================starting server==============================================
-app.listen(8080, () => {
-  console.log("server is running on port : 8080");
+const port = 8080;
+app.listen(port, () => {
+  console.log(`server is running on port : $${port}`);
+  console.log(`http://localhost:${port}/listings`);
 });
-
 
 //===============Routes middleware====================================================
 app.use("/listings", listing);
 app.use("/listings/:id/reviews", reviews);
 
-
 //route for all incorrect route request------------------------------
-app.all("*", (req,res,next)=>{
-    next(new ExpressError(404, "Page Not Found"));
+app.all("*", (req, res, next) => {
+  next(new ExpressError(404, "Page Not Found"));
 });
-
 
 // error handling middlewares----------------------------------------
 app.use((err, req, res, next) => {
-    let { statusCode=500, message="Something went wrong" } = err;
+  let { statusCode = 500, message = "Something went wrong" } = err;
   // res.status(statusCode).send(message);
-    res.status(statusCode).render("listings/error.ejs", { message });
+  res.status(statusCode).render("listings/error.ejs", { message });
 });
