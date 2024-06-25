@@ -1,0 +1,42 @@
+<% layout("layouts/boilerplate.ejs") %>
+
+<div class="row mt-3">
+  <div class="col-6 offset-3">
+    <h1>Signup on Traveling Agent</h1>
+    <form action="/signup" method="POST" novalidate class="needs-validation">
+      <!-- for username -->
+      <div class="mb-3">
+        <lable for="username" class="form-lable">username</lable>
+        <input
+          name="username"
+          id="username"
+          type="text"
+          class="form-control"
+          required />
+        <div class="valid-feedback">username Looks Good!!</div>
+      </div>
+      <!-- for email -->
+      <div class="mb-3">
+        <lable for="email" class="form-lable">Email</lable>
+        <input
+          name="email"
+          id="email"
+          type="email"
+          class="form-control"
+          required />
+      </div>
+      <!-- for password -->
+      <div class="mb-3">
+        <lable for="password" class="form-lable">Password</lable>
+        <input
+          name="password"
+          id="password"
+          type="password"
+          class="form-control"
+          required />
+      </div>
+      <!-- submit button -->
+      <button class="btn btn-success">signup</button>
+    </form>
+  </div>
+</div>

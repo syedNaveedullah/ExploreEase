@@ -8,10 +8,14 @@ const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js");
 
 //requiring routes files
-const listing = require("./routes/listing.js");
-const reviews = require("./routes/review.js");
+const listingRouter = require("./routes/listing.js");
+const reviewsRouter = require("./routes/review.js");
+const userRouter = require("./routes/user.js");
 
 //========================middle wares=====================================================
 //setting view engine
@@ -37,15 +41,28 @@ let sessionOptions = {
     httpOnly: true,
   },
 };
+
 app.use(session(sessionOptions));
 // connect-flash
 app.use(flash());
+
+// for passport
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+// it save data in session and delete
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
 //flash local variabls
 app.use((req, res, next) => {
   res.locals.successMsg = req.flash("success");
   res.locals.errorMsg = req.flash("error");
   next();
 });
+
+
 
 //=====================making connection with DB======================================
 main()
@@ -62,13 +79,26 @@ async function main() {
 //=========================starting server==============================================
 const port = 8080;
 app.listen(port, () => {
-  console.log(`server is running on port : $${port}`);
+  console.log(`server is running on port : ${port}`);
   console.log(`http://localhost:${port}/listings`);
 });
 
+// =========Testing Routes=====================================================
+app.get("/register", async (req,res)=>{
+  // creating demo user
+  let fakeuser = new User({
+    email: "student@gmail.com",
+    username: "WebBees-student"
+  });
+ 
+  let newuser = await User.register(fakeuser, "hello123");
+  res.send(newuser);
+})
+
 //===============Routes middleware====================================================
-app.use("/listings", listing);
-app.use("/listings/:id/reviews", reviews);
+app.use("/listings", listingRouter);
+app.use("/listings/:id/reviews", reviewsRouter);
+app.use("/", userRouter);
 
 //route for all incorrect route request------------------------------
 app.all("*", (req, res, next) => {
