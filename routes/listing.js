@@ -4,6 +4,7 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
 const { listingSchema } = require("../schema.js");
 const Listing = require("../models/listing");
+const { isLoggedIn } = require("../middleware.js");
 
 //server side schema validation function (it is passed as middleware in the required route)
 // For Listings
@@ -29,7 +30,7 @@ router.get(
 );
 
 //new route
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("listings/new.ejs");
 });
 
@@ -40,9 +41,9 @@ router.get(
     let { id } = req.params;
     let listing = await Listing.findById(id).populate("reviews");
 
-    if(!listing){
-    req.flash("error", "Listing you want to access does not exists!!");
-    res.redirect("/listings");
+    if (!listing) {
+      req.flash("error", "Listing you want to access does not exists!!");
+      res.redirect("/listings");
     }
     res.render("listings/show.ejs", { listing });
   })
@@ -51,6 +52,7 @@ router.get(
 // Create Route, adding new listing to the listings
 router.post(
   "/",
+  isLoggedIn,
   validateListing,
   wrapAsync(async (req, res, next) => {
     // let {title, description, image, price, country, location} = req.body;
@@ -73,14 +75,15 @@ router.post(
 //edit route
 router.get(
   "/:id/edit",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
     // console.log(listing);
-    if(!listing){
+    if (!listing) {
       req.flash("error", "Listing you want to access does not exists!!");
       res.redirect("/listings");
-      }
+    }
     res.render("listings/edit.ejs", { listing });
   })
 );
@@ -88,6 +91,7 @@ router.get(
 //Update Route
 router.put(
   "/:id",
+  isLoggedIn,
   validateListing,
   wrapAsync(async (req, res) => {
     if (!req.body.listing) {
@@ -103,6 +107,7 @@ router.put(
 //delete route
 router.delete(
   "/:id",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     let deletedListing = await Listing.findByIdAndDelete(id);

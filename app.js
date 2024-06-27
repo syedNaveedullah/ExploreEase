@@ -54,15 +54,13 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
 //flash local variabls
 app.use((req, res, next) => {
   res.locals.successMsg = req.flash("success");
   res.locals.errorMsg = req.flash("error");
+  res.locals.currentUser = req.user;
   next();
 });
-
-
 
 //=====================making connection with DB======================================
 main()
@@ -84,16 +82,16 @@ app.listen(port, () => {
 });
 
 // =========Testing Routes=====================================================
-app.get("/register", async (req,res)=>{
+app.get("/register", async (req, res) => {
   // creating demo user
   let fakeuser = new User({
     email: "student@gmail.com",
-    username: "WebBees-student"
+    username: "WebBees-student",
   });
- 
+
   let newuser = await User.register(fakeuser, "hello123");
   res.send(newuser);
-})
+});
 
 //===============Routes middleware====================================================
 app.use("/listings", listingRouter);
