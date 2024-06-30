@@ -2,23 +2,8 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
-const { listingSchema } = require("../schema.js");
 const Listing = require("../models/listing");
-const { isLoggedIn } = require("../middleware.js");
-
-//server side schema validation function (it is passed as middleware in the required route)
-// For Listings
-const validateListing = (req, res, next) => {
-  // using joi schema validation
-  let { error } = listingSchema.validate(req.body);
-  // console.log(error);
-  if (error) {
-    let errMsg = error.details.map((el) => el.message).join(","); //it is used to extract the msg from the error
-    throw new ExpressError(400, errMsg);
-  } else {
-    next();
-  }
-};
+const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
 
 //index route
 router.get(
@@ -78,6 +63,7 @@ router.post(
 router.get(
   "/:id/edit",
   isLoggedIn,
+  isOwner,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
@@ -94,6 +80,7 @@ router.get(
 router.put(
   "/:id",
   isLoggedIn,
+  isOwner,
   validateListing,
   wrapAsync(async (req, res) => {
     if (!req.body.listing) {
@@ -110,6 +97,7 @@ router.put(
 router.delete(
   "/:id",
   isLoggedIn,
+  isOwner,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     let deletedListing = await Listing.findByIdAndDelete(id);
