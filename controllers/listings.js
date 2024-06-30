@@ -1,14 +1,17 @@
 const Listing = require("../models/listing");
 
+//index route
 module.exports.index = async (req, res) => {
   let allListings = await Listing.find({});
   res.render("listings/index.ejs", { allListings });
 };
 
+//new route
 module.exports.renderNewForm = (req, res) => {
   res.render("listings/new.ejs");
 };
 
+//show route
 module.exports.showListing = async (req, res) => {
   let { id } = req.params;
   let listing = await Listing.findById(id)
@@ -26,6 +29,7 @@ module.exports.showListing = async (req, res) => {
   res.render("listings/show.ejs", { listing });
 };
 
+// Create Route, adding new listing to the listings
 module.exports.createListing = async (req, res, next) => {
   // let {title, description, image, price, country, location} = req.body;
   // //another way
@@ -44,6 +48,7 @@ module.exports.createListing = async (req, res, next) => {
   res.redirect("/listings");
 };
 
+//edit route
 module.exports.renderEditForm = async (req, res) => {
   let { id } = req.params;
   let listing = await Listing.findById(id);
@@ -55,6 +60,7 @@ module.exports.renderEditForm = async (req, res) => {
   res.render("listings/edit.ejs", { listing });
 };
 
+//Update Route
 module.exports.updateListing = async (req, res) => {
   if (!req.body.listing) {
     throw new ExpressError(400, "Send Valid Data for Listing");
@@ -65,6 +71,7 @@ module.exports.updateListing = async (req, res) => {
   res.redirect(`/listings/${id}`);
 };
 
+//delete route
 module.exports.destoryListing = async (req, res) => {
   let { id } = req.params;
   let deletedListing = await Listing.findByIdAndDelete(id);
