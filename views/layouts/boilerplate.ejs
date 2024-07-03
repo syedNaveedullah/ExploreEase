@@ -26,13 +26,15 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
       rel="stylesheet" />
+
+    <!-- css link for rating.css -->
+    <link rel="stylesheet" href="/css/rating.css" />
   </head>
   <body>
     <%- include("../includes/navbar.ejs") %>
 
     <div class="container mt-2">
-      <%- include("../includes/flash.ejs") %> 
-      <%- body %>
+      <%- include("../includes/flash.ejs") %> <%- body %>
     </div>
 
     <%- include("../includes/footer.ejs") %>
