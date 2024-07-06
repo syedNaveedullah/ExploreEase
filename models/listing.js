@@ -10,11 +10,14 @@ const { string } = require("joi");
 
 // schema
 const listingSchema = new Schema({
+  //for title
   title: {
     type: String,
     required: true,
   },
+  //for description
   description: String,
+  // for image
   image: {
     //this default img logic is used for demo at dev stage
     // type: String,
@@ -24,19 +27,35 @@ const listingSchema = new Schema({
     filename: String,
   },
 
+  // for price
   price: Number,
+  // for location
   location: String,
+  // for country
   country: String,
-
+  // for reviews
   reviews: [
     {
       type: Schema.Types.ObjectId,
       ref: "Review",
     },
   ],
+  // for owner
   owner: {
     type: Schema.Types.ObjectId,
     ref: "User",
+  },
+  // for coordinates
+  geometry: {
+    type: {
+      type: String, // Don't do `{ location: { type: String } }`
+      enum: ["Point"], // 'location.type' must be 'Point'
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
   },
 });
 
