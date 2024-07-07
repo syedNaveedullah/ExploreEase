@@ -101,7 +101,7 @@ async function main() {
 const port = 8080;
 app.listen(port, () => {
   console.log(`server is running on port : ${port}`);
-  console.log(`http://localhost:${port}/listings`);
+  console.log(`http://localhost:${port}/`);
 });
 
 // =========Testing Routes=====================================================
@@ -114,6 +114,11 @@ app.get("/register", async (req, res) => {
 
   let newuser = await User.register(fakeuser, "hello123");
   res.send(newuser);
+});
+
+// root route
+app.get("/", (req, res) => {
+  res.render("listings/rootPage.ejs");
 });
 
 //===============Routes middleware====================================================
