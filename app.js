@@ -5,12 +5,17 @@ if (process.env.NODE_ENV != "production") {
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const MONGO_URL = "mongodb://127.0.0.1:27017/travelingAgent";
+// local mongoDB connection
+// const MONGO_URL = "mongodb://127.0.0.1:27017/travelingAgent";
+// mongoDB Atlas Cloud DB
+const atlasDB_url = process.env.ATLASDB_URL;
+// connecting views path
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -34,8 +39,22 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 //public folder
 app.use(express.static(path.join(__dirname, "/public")));
+
+// MongoDB session store
+const store = MongoStore.create({
+  mongoUrl: atlasDB_url,
+  crypto: {
+    secret: "mysupersecretkey",
+  },
+  touchAfter: 24 * 3600,
+});
+
+store.on("error", () => {
+  console.log("error in mongo session store", err);
+});
 //express sessions
 let sessionOptions = {
+  store,
   secret: "mysupersecretkey",
   resave: false,
   saveUninitialized: true,
@@ -75,7 +94,7 @@ main()
 
 //calling main to connect with DB
 async function main() {
-  await mongoose.connect(MONGO_URL);
+  await mongoose.connect(atlasDB_url);
 }
 
 //=========================starting server==============================================
