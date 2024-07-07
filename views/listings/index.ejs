@@ -1,8 +1,104 @@
 <% layout("/layouts/boilerplate.ejs") %>
+<style>
+    #filters{
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .filter{
+        margin-left: 2rem;
+        margin-top: 1.5rem;
+        text-align: center;
+        opacity: 0.8;
+    }
+
+    .filter:hover{
+        opacity: 1;
+        cursor: pointer;
+    }
+
+    .filter i {
+        font-size: 1.3rem;
+    }
+
+    .filter p {
+        font-size: 0.8rem;
+    }
+
+    .tax-text{
+        display: none;
+    }
+
+    .tax-toggle{
+        border: 1px solid rgb(36, 36, 36);
+        border-radius: 1rem;
+        height: 3.25rem;
+        padding: 0.8rem;
+        display: flex;
+        align-items: center;
+        margin-left: 2.5rem;
+    }
+</style>
+<!-- style sheet ends ------------------------- -->
 <body>
     
-    <h3>All Listings</h3>
-    
+    <!-- <h3>All Listings</h3> -->
+     <!-- filters start--------------------------------------- -->
+     <div id="filters">
+        <div class="filter">
+        <div><i class="fa-solid fa-fire"></i></div>
+        <b><p>Trending</p></b>
+        </div>
+        <div class="filter">
+        <div><i class="fa-solid fa-house-chimney"></i></div>
+        <b><p>Farms</p></b>
+        </div>
+        <div class="filter">
+        <div><i class="fa-solid fa-bed"></i></i></div>
+        <b><p>Rooms</p></b>
+        </div>
+        <div class="filter">
+        <div><i class="fa-solid fa-mountain-city"></i></div>
+        <b><p>iconic Cities</p></b>
+        </div>
+        <div class="filter">
+        <div><i class="fa-solid fa-mountain"></i></i></div>
+        <b><p>Mountain</p></b>
+        </div>
+        <div class="filter">
+        <div><i class="fa-brands fa-fort-awesome"></i></div>
+        <b><p>Castles</p></b>
+        </div>
+        <div class="filter">
+        <div><i class="fa-solid fa-person-swimming"></i></div>
+        <b><p>Amazing Pools</p></b>
+        </div>
+        <div class="filter">
+        <div><i class="fa-solid fa-campground"></i></div>
+        <b><p>Camping</p></b>
+        </div>
+        <div class="filter">
+        <div><i class="fa-regular fa-snowflake"></i></div>
+        <b><p>Arctic</p></b>
+        </div>
+        <div class="filter">
+        <div><i class="fa-solid fa-tree"></i></div>
+        <b><p>TreeHouses</p></b>
+        </div>
+        <div class="filter">
+        <div><i class="fa-solid fa-ship"></i></div>
+        <b><p>BoatHouse</p></b>
+        </div>
+<!-- tax toggle button -->
+        <div class="tax-toggle">
+            <div class="form-check-reverse form-switch">
+  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+  <label class="form-check-label" for="flexSwitchCheckDefault">Display total after taxes</label>
+</div>
+        </div>
+     </div>
+    <!-- filters end----------------------------------------------- -->
     <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-xs-1" >
         <% for(listing of allListings){ %>
             <a href="/listings/<%= listing._id %>" class="listing-link">
@@ -18,13 +114,27 @@
                 <div class="card-body">
                     <p class="card-text">
                         <b><%= listing.title %></b> <br>
-                        &#8377 <%= listing.price.toLocaleString("en-IN") %> / night
+                        &#8377 <%= listing.price.toLocaleString("en-IN") %><i class="tax-text"> + 15% tax</i> / night
+                        
                     </p>
                 </div>
             </div>
         </a>
             <% } %>
         </div>
-            
+<!------------js code to add functionality-------------------------->
+        <script>
+            let taxSwitch = document.getElementById("flexSwitchCheckDefault");
+            taxSwitch.addEventListener("click", ()=>{
+                let taxText = document.getElementsByClassName("tax-text");
+                for(tax of taxText){
+                    if(tax.style.display != "inline"){
+                        tax.style.display = "inline";
+                    }else{
+                        tax.style.display = "none";
+                    }
+                }
+            });
+        </script>
     </body>
     
